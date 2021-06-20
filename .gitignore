@@ -1,0 +1,7 @@
+*.git
+*.vs
+bin
+lib
+obj
+packages
+*.config

@@ -39,7 +39,7 @@ namespace ModBrowser
 
         public static IEnumerator UpdateModData()
         {
-            string modDataURL = "https://www.hithub.com/"
+            string modDataURL = "https://www.github.com/Contiinuum/ModBrowser/src"
         }
 
         /// <summary>
