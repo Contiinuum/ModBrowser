@@ -15,8 +15,8 @@ namespace ModBrowser
         {
             if (MelonHandler.Mods.Any(it => it.Assembly.GetName().Name == "SongBrowser"))
             {
-                var scoreVersion = new Version(MelonHandler.Mods.First(it => it.Assembly.GetName().Name == "AuthorableModifiers").Info.Version);
-                var lastUnsupportedVersion = new Version("2.4.1");
+                /*var scoreVersion = new Version(MelonHandler.Mods.First(it => it.Assembly.GetName().Name == "AuthorableModifiers").Info.Version);
+                var lastUnsupportedVersion = new Version("2.4.0");
                 var result = scoreVersion.CompareTo(lastUnsupportedVersion);
                 if (result > 0)
                 {
@@ -24,8 +24,9 @@ namespace ModBrowser
                 }
                 else
                 {
-                    MelonLogger.LogWarning("Please update SongBrowser to use this mod.");
-                }
+                    MelonLogger.Warning("Please update SongBrowser to use this mod.");
+                }*/
+                songBrowserInstalled = true;
             }
         }
     }

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using MelonLoader;
 using UnityEngine;
 using Harmony;
+using System.Collections;
 
 namespace ModBrowser
 {
     public class Main : MelonMod
     {
+        public static List<Mod> mods = new List<Mod>();
+        public static bool showRestartReminder = false;
         public static class BuildInfo
         {
             public const string Name = "ModBrowser";  // Name of the Mod.  (MUST BE SET)
@@ -19,10 +22,34 @@ namespace ModBrowser
         
 		 public override void OnApplicationStart()
          {
-            HarmonyInstance instance = HarmonyInstance.Create("AudicaMod");
             Integrations.LoadIntegrations();
+            ModDownloader.UpdateModData();
          }
 
+        public override void OnUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                ModDownloader.GetAllMods();
+            }
+        }
+
+        public static void TextPopup(string text)
+        {
+            KataConfig.I.CreateDebugText(text, new Vector3(0f, -1f, 5f), 5f, null, false, 0.2f);
+        }
+
+        public static void ShowRestartReminder()
+        {
+            showRestartReminder = false;
+            MelonCoroutines.Start(IShowRestartReminder());
+        }
+
+        private static IEnumerator IShowRestartReminder()
+        {
+            yield return new WaitForSecondsRealtime(.5f);
+            TextPopup("Please restart your game!");
+        }
     }
 }
 

@@ -7,18 +7,20 @@ using MelonLoader.TinyJSON;
 using System.IO;
 using System.Media;
 using System.Collections.Generic;
+using System.Reflection;
+using SimpleJSON;
+using System.Diagnostics;
 
 namespace ModBrowser
 {
     public static class ModDownloader
     {
-        internal static string apiUrl = "https://www.github.com/";
-        internal static APIModList modList;
+        internal static string apiUrl = "https://api.github.com/repos/";
         internal static bool needRefresh = false;
         internal static int page = 1;
         internal static HashSet<string> downloadedFileNames = new HashSet<string>();
         internal static HashSet<string> failedDownloads = new HashSet<string>();
-
+        internal static bool showPopup = false;
         /// <summary>
         /// Coroutine that searches for songs using the web API
         /// </summary>
@@ -29,17 +31,108 @@ namespace ModBrowser
         /// <param name="sortByPlayCount">Sort result by play count</param>
         /// <param name="page">Page to return (see APISongList.total_pages after initial search (page = 1) to check if multiple pages exist)</param>
         /// <param name="total">Bypasses all query and filter limitations and just returns entire song list</param>
-        public static IEnumerator DoSongWebSearch(Action<string, APIModList> onSearchComplete)
+        
+        internal static void ShowQueuedPopup()
         {
-            string concatURL = "http://www.audica.wiki:5000/api/customsongs?pagesize=all";
-            WWW www = new WWW(concatURL);
-            yield return www;
-            onSearchComplete(search, JSON.Load(www.text).Make<APIModList>());
+            showPopup = false;
+            Main.TextPopup("Mods updated!");
+        }
+        public static void GetAllMods()
+        {
+            foreach(Mod mod in Main.mods)
+            {
+                string url = $"{apiUrl}{mod.userName}/{mod.repoName}/releases/latest";
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if(request != null)
+                {
+                    request.Method = "GET";
+                    request.UserAgent = "ModBrowser";
+                    request.ServicePoint.Expect100Continue = false;
+                    try
+                    {
+                        using (StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream()))
+                        {
+                            string json = reader.ReadToEnd();
+                            var data = SimpleJSON.JSON.Parse(json);
+                            mod.version = Version.Parse(data["tag_name"]);
+                            mod.downloadLink = data["assets"][0]["browser_download_url"];
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        MelonLogger.Warning("Couldn't get info on " + mod.repoName + ": " + ex.Message);
+                        continue;
+                    }
+                }
+            }
+            SetModStatus();
         }
 
-        public static IEnumerator UpdateModData()
+        public static void SetModStatus()
         {
-            string modDataURL = "https://www.github.com/Contiinuum/ModBrowser/src"
+            string modPath = Path.Combine(Environment.CurrentDirectory, "Mods");
+            string[] files = Directory.GetFiles(modPath);
+            bool noMods = files.Length == 0;
+            foreach (Mod mod in Main.mods)
+            {
+                if (noMods)
+                {
+                    mod.isDownloaded = false;
+                    mod.isUpdated = false;
+                    continue;
+                }
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if(Path.GetFileNameWithoutExtension(files[i]) == mod.repoName)
+                    {
+                        mod.isDownloaded = true;
+                        FileVersionInfo modInfo = FileVersionInfo.GetVersionInfo(Path.Combine(modPath, files[i]));
+                        Version localVersion = Version.Parse(modInfo.FileVersion);
+                        if(localVersion >= mod.version)
+                        {
+                            mod.isUpdated = true;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            foreach(Mod mod in Main.mods)
+            {
+                if(mod.isDownloaded && !mod.isUpdated)
+                {
+                    MelonCoroutines.Start(DownloadMod(mod, true, true));
+                }
+            }
+        }
+
+        public static async void UpdateModData()
+        {
+            using (WebClient client = new WebClient())
+            {
+                string targetPath = Path.Combine(Environment.CurrentDirectory, "Mods/Config");
+                if (!Directory.Exists(targetPath))
+                {
+                    Directory.CreateDirectory(targetPath);
+                }
+                targetPath = Path.Combine(targetPath, "modData.json");
+                byte[] bytes;
+                try
+                {
+                    client.Headers.Add("user-agent", "ModBrowser");
+                    bytes = await client.DownloadDataTaskAsync(new Uri("https://raw.githubusercontent.com/Contiinuum/ModBrowser/main/ModData.json"));
+                    using (FileStream stream = new FileStream(targetPath, FileMode.Create))
+                    {
+                        await stream.WriteAsync(bytes, 0, bytes.Length);
+                    }
+                }
+                catch(WebException ex)
+                {
+                    MelonLogger.Warning("Couldn't update modData: " + ex.InnerException.Message);
+                }
+                Decoder.LoadModData();
+                GetAllMods();
+            }
         }
 
         /// <summary>
@@ -51,118 +144,63 @@ namespace ModBrowser
         /// <param name="onDownloadComplete">Called when download has been written to disk.
         ///     First argument is the songID of the downloaded song.
         ///     Second argument is true if the download succeeded, false otherwise.</param>
-        public static IEnumerator DownloadSong(string songID, string downloadUrl, Action<string, bool> onDownloadComplete = null)
+        public static IEnumerator DownloadMod(Mod mod, bool update, bool onLoad = false)
         {
-            string[] splitURL = downloadUrl.Split('/');
-            string audicaName = splitURL[splitURL.Length - 1];
-            string path = Path.Combine(SongBrowser.mainSongDirectory, audicaName);
-            string downloadPath = Path.Combine(SongBrowser.downloadsDirectory, audicaName);
-            if (!File.Exists(path) && !File.Exists(downloadPath))
+            using (WebClient client = new WebClient())
             {
-                WWW www = new WWW(downloadUrl);
-                yield return www;
-                byte[] results = www.bytes;
-                File.WriteAllBytes(downloadPath, results);
-            }
-            yield return null;
-
-            SongList.SongSourceDir dir = new SongList.SongSourceDir(Application.dataPath, SongBrowser.downloadsDirectory);
-            string file = downloadPath.Replace('\\', '/');
-            bool success = SongList.I.ProcessSingleSong(dir, file, new Il2CppSystem.Collections.Generic.HashSet<string>());
-            downloadedFileNames.Add(audicaName);
-
-            if (success)
-            {
-                needRefresh = true;
-            }
-            else
-            {
-                failedDownloads.Add(audicaName);
-                if (File.Exists(downloadPath))
-                    File.Delete(downloadPath);
-            }
-
-            onDownloadComplete?.Invoke(songID, success);
-        }
-
-        /// <summary>
-        /// Coroutine that plays song preview for given preview URL.
-        /// If called with the url of a preview that's already playing
-        /// the preview will be stopped instead.
-        /// </summary>
-        /// <param name="url">URL to preview, typically Song.preview_url</param>
-        public static IEnumerator StreamPreviewSong(string url)
-        {
-            if (lastPreview == url) // let people stop previews since they're very loud
-            {
-                lastPreview = "";
-                player.Stop();
-            }
-            else
-            {
-                lastPreview = url;
-                WWW www = new WWW(url);
-                yield return www;
-                if (www.isDone)
+                string targetPath = Path.Combine(Environment.CurrentDirectory, "Mods");
+                if (!Directory.Exists(targetPath))
                 {
-                    Stream stream = new MemoryStream(www.bytes);
-                    player.Stream = new OggDecodeStream(stream);
-                    yield return new WaitForSeconds(0.2f);
-                    player.Play();
-                    yield return new WaitForSeconds(15f);
+                    Directory.CreateDirectory(targetPath);
                 }
-            }
-
-            yield return null;
-        }
-
-        internal static void StartNewSongSearch()
-        {
-            page = 1;
-            StartNewPageSearch();
-        }
-
-        internal static void StartNewPageSearch()
-        {
-            SongDownloaderUI.ResetScrollPosition();
-            MelonCoroutines.Start(DoSongWebSearch(searchString, (query, result) => {
-                modList = result;
-                if (SongDownloaderUI.songItemPanel != null)
+                targetPath = Path.Combine(targetPath, mod.repoName + ".dll");
+                byte[] bytes;
+                try
                 {
-                    SongDownloaderUI.AddSongItems(SongDownloaderUI.songItemMenu, modList);
+                    client.Headers.Add("user-agent", "ModBrowser");
+                    //bytes = await client.DownloadDataTaskAsync(new Uri(mod.downloadLink));
+                    bytes = client.DownloadData(new Uri(mod.downloadLink));
+                    using (FileStream stream = new FileStream(targetPath, FileMode.Create))
+                    {
+                        //await stream.WriteAsync(bytes, 0, bytes.Length);
+                        stream.Write(bytes, 0, bytes.Length);
+                        mod.isDownloaded = true;
+                        mod.isUpdated = true;
+                        if (!onLoad)
+                        {
+                            string txt = update ? " updated" : " downloaded";
+                            Main.TextPopup(mod.displayRepoName + txt);
+                        }
+                        else
+                        {
+                            showPopup = true;
+                        }
+                    }
+                    MelonLogger.Msg("Updated " + mod.repoName);
+                    Main.showRestartReminder = true;
                 }
-            }, SongDownloaderUI.difficultyFilter,
-               SongDownloaderUI.curated, SongDownloaderUI.popularity, page, false));
+                catch (WebException ex)
+                {
+                    MelonLogger.Warning("Couldn't download " + mod.repoName + ": " + ex.InnerException.Message);
+                }
+                yield return null;
+            }
         }
 
-        internal static void NextPage()
+        public static IEnumerator DeleteMod(Mod mod)
         {
-            if (page > modList.total_pages)
-                page = modList.total_pages;
-            else if (page < 1)
-                page = 1;
-            else
-                page++;
+            string path = Path.Combine(Environment.CurrentDirectory, "Mods", mod.repoName + ".dll");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Main.TextPopup(mod.displayRepoName + " deleted");
+                Main.showRestartReminder = true;
+            }
+            mod.isDownloaded = false;
+            mod.isUpdated = false;
+            yield return null;    
+            
         }
-        internal static void PreviousPage()
-        {
-            if (page == 1) return;
-            if (page > modList.total_pages)
-                page = modList.total_pages;
-            else if (page < 1)
-                page = 1;
-            else
-                page--;
-        }
-    }
-    [Serializable]
-    public class APIModList
-    {
-        public int total_pages;
-        public int mod_count;
-        public Mod[] mods;
-        public int pagesize;
-        public int page;
     }
 }
 
