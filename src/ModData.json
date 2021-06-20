@@ -1,0 +1,18 @@
+﻿{
+  "Mods": [
+    {
+      "repoName": "AuthorableModifiers",
+      "displayRepoName": "Authorable Modifiers",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description":  "Allows maps to use ingame modifiers."
+    },
+    {
+      "repoName": "TwitchModifiers",
+      "displayRepoName": "Twitch Modifiers",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description":  "Allows twitch chat to trigger ingame modifiers."
+    }
+  ]
+}

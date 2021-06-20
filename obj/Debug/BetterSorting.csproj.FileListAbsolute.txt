@@ -1,0 +1,6 @@
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\bin\Debug\BetterSorting.dll
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\bin\Debug\BetterSorting.pdb
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\BetterSorting.csprojAssemblyReference.cache
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\BetterSorting.csproj.CoreCompileInputs.cache
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\BetterSorting.dll
+C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\BetterSorting.pdb
