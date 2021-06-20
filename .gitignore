@@ -5,3 +5,4 @@ lib
 obj
 packages
 *.config
+*.csproj
