@@ -5,14 +5,190 @@
       "displayRepoName": "Authorable Modifiers",
       "userName": "Contiinuum",
       "displayUserName": "Continuum",
-      "description":  "Allows maps to use ingame modifiers."
+      "description": "Allows maps to use ingame modifiers."
     },
     {
       "repoName": "TwitchModifiers",
       "displayRepoName": "Twitch Modifiers",
       "userName": "Contiinuum",
       "displayUserName": "Continuum",
-      "description":  "Allows twitch chat to trigger ingame modifiers."
+      "description": "Allows twitch chat to trigger ingame modifiers."
+    },
+    {
+      "repoName": "ModSettings",
+      "displayRepoName": "Mod Settings",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Tweak mod settings in-game."
+    },
+    {
+      "repoName": "Arena-Loader",
+      "displayRepoName": "Arena Loader",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Load custom arenas."
+    },
+    {
+      "repoName": "AutoRecenterDisabler",
+      "displayRepoName": "Auto Recenter Disabler",
+      "userName": "Contiinuum",
+      "displayUserName": "Alternity156 & Continuum",
+      "description": "Disables auto recentering."
+    },
+    {
+      "repoName": "CustomModifiers",
+      "displayRepoName": "Custom Modifiers",
+      "userName": "Alternity156",
+      "displayUserName": "Alternity156",
+      "description": "Set custom modifiers."
+    },
+    {
+      "repoName": "AudicaFollowCamera",
+      "displayRepoName": "Follow Camera",
+      "userName": "Contiinuum",
+      "displayUserName": "Alternity156 & Continuum",
+      "description": "A custom 3rd person camera."
+    },
+    {
+      "repoName": "AudicaGameplaySettings",
+      "displayRepoName": "Gameplay Settings",
+      "userName": "Contiinuum",
+      "displayUserName": "Alternity156 & Continuum",
+      "description": "Change gameplay settings before starting songs."
+    },
+    {
+      "repoName": "Grind-Mode",
+      "displayRepoName": "Grind Mode",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description": "Helps you grind highscores. Includes Intro skipping."
+    },
+    {
+      "repoName": "GunBeamRedirectionDisabler",
+      "displayRepoName": "Gun Beam Redirection Disabler",
+      "userName": "Alternity156",
+      "displayUserName": "Alternity156",
+      "description": "Always shows where you actually shot at."
+    },
+    {
+      "repoName": "HitScoreVisializer_MelonLoader",
+      "displayRepoName": "Hit Score Visializer",
+      "userName": "Mettra",
+      "displayUserName": "Mettra",
+      "description": "Colorful score popups!"
+    },
+    {
+      "repoName": "AudicaHMDDetectionDisabler",
+      "displayRepoName": "HMD Detection Disabler",
+      "userName": "Contiinuum",
+      "displayUserName": "Alternity156 & Continuum",
+      "description": ""
+    },
+    {
+      "repoName": "MenuGrabDisabler",
+      "displayRepoName": "Menu Grab Disabler",
+      "userName": "Alternity156",
+      "displayUserName": "Alternity156",
+      "description": "Disables menu grabbing."
+    },
+    {
+      "repoName": "ParticleKiller",
+      "displayRepoName": "Particle Killer",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Allows you to kill all particles."
+    },
+    {
+      "repoName": "AudicaScorePercentage",
+      "displayRepoName": "Score Percentage",
+      "userName": "Alternity156",
+      "displayUserName": "Alternity156",
+      "description": "Displays your score in % of max score."
+    },
+    {
+      "repoName": "SpectatorCamFix",
+      "displayRepoName": "Spectator Camera Fix",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description": "Fixes spectator cam not enabling on launch with oculus headsets."
+    },
+    {
+      "repoName": "SongBrowser",
+      "displayRepoName": "Song Browser",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Download songs from in-game!"
+    },
+    {
+      "repoName": "SongSettings",
+      "displayRepoName": "Song Settings",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": ""
+    },
+    {
+      "repoName": "TimingAssist",
+      "displayRepoName": "Timing Assist",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Like aim assist, but for timing."
+    },
+    {
+      "repoName": "AudicaTrippyMenu",
+      "displayRepoName": "Trippy Menu",
+      "userName": "Alternity156",
+      "displayUserName": "Alternity156",
+      "description": "Enables psychedelia in menus."
+    },
+    {
+      "repoName": "Audica-SongDataLoader",
+      "displayRepoName": "Song Data Loader",
+      "userName": "MeepsKitten",
+      "displayUserName": "MeepsKitten",
+      "description": "Loads in-game song covers and more."
+    },
+    {
+      "repoName": "Audica-Gun-Extras",
+      "displayRepoName": "Gun Extras",
+      "userName": "MeepsKitten",
+      "displayUserName": "MeepsKitten",
+      "description": ""
+    },
+    {
+      "repoName": "Meeps-Audica-UI-Enhancements",
+      "displayRepoName": "Meeps' UI Enhancements",
+      "userName": "MeepsKitten",
+      "displayUserName": "MeepsKitten",
+      "description": ""
+    },
+    {
+      "repoName": "ScoreOverlay",
+      "displayRepoName": "Score Overlay",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Adds an overlay to spectator camera."
+    },
+    {
+      "repoName": "ColoredChains",
+      "displayRepoName": "Colored Chains",
+      "userName": "octoberU",
+      "displayUserName": "octo",
+      "description": "Colors the chain lines for easier readability!"
+    },
+    {
+      "repoName": "AUDICA-Timing-Attack",
+      "displayRepoName": "Timing Attack",
+      "userName": "Ahriana",
+      "displayUserName": "Ahriana",
+      "description": "Allows you to disable target clouds and cue darts."
+    },
+    {
+      "repoName": "AutoLightshow",
+      "displayRepoName": "Auto Lightshow",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description": "Adds automated Lightshows to all maps."
     }
+
   ]
 }

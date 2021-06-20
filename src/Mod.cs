@@ -14,6 +14,7 @@ namespace ModBrowser
         public string userName;
         public string displayUserName;
         public string description;
+        public string fileName;
         public Version version;
         public string downloadLink;
         public bool isDownloaded = false;

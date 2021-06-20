@@ -39,6 +39,7 @@ namespace ModBrowser
         }
         public static void GetAllMods()
         {
+            string modsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "mods.json")
             foreach(Mod mod in Main.mods)
             {
                 string url = $"{apiUrl}{mod.userName}/{mod.repoName}/releases/latest";
@@ -53,6 +54,7 @@ namespace ModBrowser
                         using (StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream()))
                         {
                             string json = reader.ReadToEnd();
+                            File.AppendAllText(modsPath, json);
                             var data = SimpleJSON.JSON.Parse(json);
                             mod.version = Version.Parse(data["tag_name"]);
                             mod.downloadLink = data["assets"][0]["browser_download_url"];
