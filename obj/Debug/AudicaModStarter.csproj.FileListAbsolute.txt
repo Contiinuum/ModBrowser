@@ -1,2 +1,0 @@
-C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\AudicaModStarter.csprojAssemblyReference.cache
-C:\Users\Jay Faulkner\Desktop\Audica Tools\Mods\audica-mod-starter-template\AudicaMod\obj\Debug\AudicaModStarter.csproj.CoreCompileInputs.cache
