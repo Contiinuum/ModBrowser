@@ -183,6 +183,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Config.cs" />
     <Compile Include="src\Decoder.cs" />
     <Compile Include="src\Hooks.cs" />
     <Compile Include="src\Integrations.cs" />

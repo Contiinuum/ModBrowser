@@ -53,7 +53,7 @@ namespace ModBrowser
                         using (StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream()))
                         {
                             string json = reader.ReadToEnd();
-                            var data = SimpleJSON.JSON.Parse(json);
+                            var data = SimpleJSON.JSON.Parse(json);                       
                             mod.version = Version.Parse(data["tag_name"]);
                             mod.downloadLink = data["assets"][0]["browser_download_url"];
                             mod.fileName = data["assets"][0]["name"];
@@ -85,7 +85,7 @@ namespace ModBrowser
                 }
                 for (int i = 0; i < files.Length; i++)
                 {
-                    if(Path.GetFileNameWithoutExtension(files[i]) == mod.fileName)
+                    if(Path.GetFileName(files[i]) == mod.fileName)
                     {
                         mod.isDownloaded = true;
                         FileVersionInfo modInfo = FileVersionInfo.GetVersionInfo(Path.Combine(modPath, files[i]));

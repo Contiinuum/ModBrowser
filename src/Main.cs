@@ -22,8 +22,21 @@ namespace ModBrowser
         
 		 public override void OnApplicationStart()
          {
+            Config.RegisterConfig();
             Integrations.LoadIntegrations();
-            ModDownloader.UpdateModData();
+            TimeSpan limit = TimeSpan.FromMinutes(60);
+            DateTime lastUpdate = DateTime.Parse(Config.lastUpdateCheck);
+            //MelonLogger.Warning(DateTime.UtcNow - lastUpdate);
+            if (DateTime.UtcNow - lastUpdate > limit)
+            {
+                MelonLogger.Msg("Checking for updates..");
+                Config.UpdateValue(nameof(Config.lastUpdateCheck), DateTime.UtcNow.ToString());
+                ModDownloader.UpdateModData();
+            }
+            else
+            {
+                MelonLogger.Msg("Checked for updates less than an hour ago. Skipping.");
+            }
          }
 
         public override void OnUpdate()
