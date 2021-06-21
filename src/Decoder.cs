@@ -22,8 +22,7 @@ namespace ModBrowser
                     try
                     {
                         var json = JSON.Parse(data);
-                        //mods = JsonConvert.DeserializeObject<Mod>(data);
-                        for(int i = 0; i < json.Count + 1; i++)
+                        for(int i = 0; i < json["Mods"].Count; i++)
                         {
                             Mod mod = new Mod();
                             mod.repoName = json["Mods"][i]["repoName"];
@@ -33,6 +32,7 @@ namespace ModBrowser
                             mod.description = json["Mods"][i]["description"];
                             mods.Add(mod);
                         }
+                        mods.OrderBy(m => m.displayRepoName);
                         Main.mods = mods;
                     }
                     catch(Exception ex)

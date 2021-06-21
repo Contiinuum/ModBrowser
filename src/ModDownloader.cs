@@ -39,7 +39,6 @@ namespace ModBrowser
         }
         public static void GetAllMods()
         {
-            string modsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "mods.json")
             foreach(Mod mod in Main.mods)
             {
                 string url = $"{apiUrl}{mod.userName}/{mod.repoName}/releases/latest";
@@ -54,15 +53,16 @@ namespace ModBrowser
                         using (StreamReader reader = new StreamReader(request.GetResponse().GetResponseStream()))
                         {
                             string json = reader.ReadToEnd();
-                            File.AppendAllText(modsPath, json);
                             var data = SimpleJSON.JSON.Parse(json);
                             mod.version = Version.Parse(data["tag_name"]);
                             mod.downloadLink = data["assets"][0]["browser_download_url"];
+                            mod.fileName = data["assets"][0]["name"];
                         }
                     }
                     catch(Exception ex)
                     {
-                        MelonLogger.Warning("Couldn't get info on " + mod.repoName + ": " + ex.Message);
+                        MelonLogger.Warning("Couldn't get info on " + mod.displayRepoName + ": " + ex.Message);
+                        MelonLogger.Msg(url);
                         continue;
                     }
                 }
@@ -85,7 +85,7 @@ namespace ModBrowser
                 }
                 for (int i = 0; i < files.Length; i++)
                 {
-                    if(Path.GetFileNameWithoutExtension(files[i]) == mod.repoName)
+                    if(Path.GetFileNameWithoutExtension(files[i]) == mod.fileName)
                     {
                         mod.isDownloaded = true;
                         FileVersionInfo modInfo = FileVersionInfo.GetVersionInfo(Path.Combine(modPath, files[i]));
@@ -155,7 +155,7 @@ namespace ModBrowser
                 {
                     Directory.CreateDirectory(targetPath);
                 }
-                targetPath = Path.Combine(targetPath, mod.repoName + ".dll");
+                targetPath = Path.Combine(targetPath, mod.fileName);
                 byte[] bytes;
                 try
                 {
