@@ -7,12 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SimpleJSON;
+using MelonLoader;
 namespace ModBrowser
 {
     public class Decoder
     {
         public static void LoadModData()
         {
+            LoadCachedMods();
             List<Mod> mods = new List<Mod>();
             using (FileStream fs = new FileStream(Path.Combine(Environment.CurrentDirectory, "Mods/Config/modData.json"), FileMode.Open))
             {
@@ -30,18 +32,51 @@ namespace ModBrowser
                             mod.userName = json["Mods"][i]["userName"];
                             mod.displayUserName = json["Mods"][i]["displayUserName"];
                             mod.description = json["Mods"][i]["description"];
-                            mods.Add(mod);
+                            if(!Main.mods.Any(m => m.repoName == mod.repoName))
+                            {
+                                mods.Add(mod);
+                            }
                         }
-                        mods.OrderBy(m => m.displayRepoName);
-                        Main.mods = mods;
+                        //Main.mods = mods;
+                        Main.mods.AddRange(mods);
+                        Main.mods.Sort((x, y) => string.Compare(x.displayRepoName, y.displayRepoName));
+                        //mods.OrderBy(m => m.displayRepoName);
                     }
                     catch(Exception ex)
                     {
-                        MelonLoader.MelonLogger.Warning("Error parsing modData.json: " + ex.Message);
+                        MelonLogger.Warning("Error parsing modData.json: " + ex.Message);
                         Main.mods = null;
                     }                   
                 }
             }
+        }
+
+        private static void LoadCachedMods()
+        {
+            string path = Path.Combine(Environment.CurrentDirectory, "Mods/Config/modCache.json");
+            if (!File.Exists(path)) return;
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    string data = reader.ReadToEnd();
+                    try
+                    {
+                        List<Mod> mods = JsonConvert.DeserializeObject<List<Mod>>(data);
+                        if (mods != null && mods.Count > 0) Main.mods = mods;
+                    }
+                    catch (Exception ex)
+                    {
+                        MelonLogger.Warning("Error parsing modCache.json: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public static void SaveModsToCache()
+        {
+            string path = Path.Combine(Environment.CurrentDirectory, "Mods/Config/modCache.json");
+            File.WriteAllText(path, JsonConvert.SerializeObject(Main.mods, Formatting.Indented));
         }
     }
 }

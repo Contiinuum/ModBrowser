@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ModBrowser
 {
+    [Serializable]
     public class Mod
     {
         public string repoName;
@@ -15,9 +16,12 @@ namespace ModBrowser
         public string displayUserName;
         public string description;
         public string fileName;
-        public Version version;
+        public string version;
         public string downloadLink;
         public bool isDownloaded = false;
         public bool isUpdated = false;
+        public string eTag = "";
+        [NonSerialized]
+        public bool apiRequestSuccessful = false;
     }
 }

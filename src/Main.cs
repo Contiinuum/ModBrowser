@@ -4,6 +4,7 @@ using MelonLoader;
 using UnityEngine;
 using Harmony;
 using System.Collections;
+using System.Linq;
 
 namespace ModBrowser
 {
@@ -11,6 +12,7 @@ namespace ModBrowser
     {
         public static List<Mod> mods = new List<Mod>();
         public static bool showRestartReminder = false;
+        public static List<Mod> pendingDelete = new List<Mod>();
         public static class BuildInfo
         {
             public const string Name = "ModBrowser";  // Name of the Mod.  (MUST BE SET)
@@ -24,26 +26,36 @@ namespace ModBrowser
          {
             Config.RegisterConfig();
             Integrations.LoadIntegrations();
-            TimeSpan limit = TimeSpan.FromMinutes(60);
-            DateTime lastUpdate = DateTime.Parse(Config.lastUpdateCheck);
+            //TimeSpan limit = TimeSpan.FromMinutes(60);
+            //DateTime lastUpdate = DateTime.Parse(Config.lastUpdateCheck);
+            //bool shouldUpdate = true;
             //MelonLogger.Warning(DateTime.UtcNow - lastUpdate);
-            if (DateTime.UtcNow - lastUpdate > limit)
+            Config.UpdateValue(nameof(Config.lastUpdateCheck), DateTime.UtcNow.ToString());
+            MelonLogger.Msg("Checking for updates..");
+            /*if (DateTime.UtcNow - lastUpdate > limit)
             {
-                MelonLogger.Msg("Checking for updates..");
-                Config.UpdateValue(nameof(Config.lastUpdateCheck), DateTime.UtcNow.ToString());
-                ModDownloader.UpdateModData();
             }
             else
             {
+                shouldUpdate = false;
                 MelonLogger.Msg("Checked for updates less than an hour ago. Skipping.");
-            }
-         }
+            }*/
+            ModDownloader.GetRateLimit();
+            bool shouldUpdate = ModDownloader.CheckUpdate();
+            MelonCoroutines.Start(ModDownloader.UpdateModData(shouldUpdate));
+        }
+
+        public override void OnApplicationQuit()
+        {
+            ModDownloader.DeleteMods();
+            Decoder.SaveModsToCache();
+        }
 
         public override void OnUpdate()
         {
             if (Input.GetKeyDown(KeyCode.M))
             {
-                ModDownloader.GetAllMods();
+                InGameUI.I.GoToPausePage();
             }
         }
 
@@ -60,6 +72,7 @@ namespace ModBrowser
 
         private static IEnumerator IShowRestartReminder()
         {
+            Decoder.SaveModsToCache();
             yield return new WaitForSecondsRealtime(.5f);
             TextPopup("Please restart your game!");
         }

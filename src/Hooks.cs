@@ -47,10 +47,10 @@ namespace ModBrowser
                         ModDownloader.ShowQueuedPopup();
                        
                     }
-                    if (Main.showRestartReminder)
+                    /*if (Main.showRestartReminder)
                     {
                         Main.ShowRestartReminder();
-                    }
+                    }*/
                 }
             }
         }
