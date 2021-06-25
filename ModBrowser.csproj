@@ -198,6 +198,7 @@
     <None Include="ModData.json" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "D:\Games\Steam\steamapps\common\Audica\Mods\$(TargetFileName)"</PostBuildEvent>

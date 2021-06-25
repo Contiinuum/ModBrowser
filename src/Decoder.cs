@@ -37,16 +37,33 @@ namespace ModBrowser
                                 mods.Add(mod);
                             }
                         }
+
                         //Main.mods = mods;
                         Main.mods.AddRange(mods);
                         Main.mods.Sort((x, y) => string.Compare(x.displayRepoName, y.displayRepoName));
-                        //mods.OrderBy(m => m.displayRepoName);
                     }
                     catch(Exception ex)
                     {
                         MelonLogger.Warning("Error parsing modData.json: " + ex.Message);
                         Main.mods = null;
                     }                   
+                }
+            }
+            CheckDeletedMods();
+        }
+
+        private static void CheckDeletedMods()
+        {
+            var files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "Mods"), "*.dll");
+            foreach(Mod mod in Main.mods)
+            {
+                if (!files.Any(f => Path.GetFileName(f) == mod.fileName))
+                {
+                    if (mod.isDownloaded)
+                    {
+                        mod.isDownloaded = false;
+                        mod.isUpdated = false;
+                    }
                 }
             }
         }

@@ -78,10 +78,10 @@ namespace ModBrowser
             SetModStatus();
         }
 
-        public static void UseRequest()
+        public static void UseRequest(string usedFor)
         {
             remainingRequests--;
-            //MelonLogger.Msg(usedFor);
+            MelonLogger.Msg(usedFor);
         }
 
         public static void GetModInfo(Mod mod)
@@ -105,7 +105,7 @@ namespace ModBrowser
                     }
                     using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
-                        UseRequest();
+                        UseRequest("Get Info for " + mod.displayRepoName);
                         mod.eTag = response.Headers["ETag"];
                         //MelonLogger.Warning("StatusCode: " + response.StatusCode);
                         //MelonLogger.Warning("Last modified: " + response.Headers["Last-Modified"]);
@@ -123,7 +123,7 @@ namespace ModBrowser
                     HttpWebResponse httpResponse = ex.Response as HttpWebResponse;
                     if (httpResponse.StatusCode != HttpStatusCode.NotModified)
                     {
-                        MelonLogger.Warning("Couldn't get info on " + mod.displayRepoName + ": " + httpResponse.StatusDescription);
+                        MelonLogger.Msg("Couldn't get info on " + mod.displayRepoName + ": " + httpResponse.StatusDescription);
                     }
                 }
             }
@@ -197,7 +197,7 @@ namespace ModBrowser
                     else
                     {
                         modDataETag = response.Headers["ETag"];
-                        UseRequest();
+                        UseRequest("Update mod data..");
                         return true;
                     }
                 }
@@ -231,7 +231,7 @@ namespace ModBrowser
                     {
                         client.Headers.Add("user-agent", "ModBrowser");
                         bytes = client.DownloadData(new Uri("https://raw.githubusercontent.com/Contiinuum/ModBrowser/main/ModData.json"));
-                        UseRequest();
+                        UseRequest("Mod data updated.");
                         using (FileStream stream = new FileStream(targetPath, FileMode.Create))
                         {
                             stream.Write(bytes, 0, bytes.Length);
@@ -291,7 +291,7 @@ namespace ModBrowser
                     //bytes = await client.DownloadDataTaskAsync(new Uri(mod.downloadLink));
                     
                     bytes = client.DownloadData(new Uri(mod.downloadLink));
-                    UseRequest();
+                    UseRequest("Downloading " + mod.displayRepoName + "..");
                     using (FileStream stream = new FileStream(targetPath, FileMode.Create))
                     {
                         //await stream.WriteAsync(bytes, 0, bytes.Length);
@@ -329,9 +329,9 @@ namespace ModBrowser
             if(!reenable) MelonHandler.LoadFromFile(path);
             List<MelonMod> mods = MelonHandler.Mods;
             MelonMod melon = mods.FirstOrDefault(m => m.Assembly.GetName().Name + ".dll" == mod.fileName);
-            MelonLogger.Msg("Enabling " + mod.displayRepoName + "..");
             if (melon != null)
             {
+                MelonLogger.Msg(mod.displayRepoName + " downloaded.");
                 mod.isDownloaded = true;
                 mod.isUpdated = true;
                 if(!reenable) melon.OnApplicationStart();

@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using MelonLoader;
 using UnityEngine;
-using Harmony;
 using System.Collections;
-using System.Linq;
 
 namespace ModBrowser
 {
@@ -55,27 +53,14 @@ namespace ModBrowser
         {
             if (Input.GetKeyDown(KeyCode.M))
             {
-                InGameUI.I.GoToPausePage();
+
             }
         }
 
         public static void TextPopup(string text)
         {
             KataConfig.I.CreateDebugText(text, new Vector3(0f, -1f, 5f), 5f, null, false, 0.2f);
-        }
-
-        public static void ShowRestartReminder()
-        {
-            showRestartReminder = false;
-            MelonCoroutines.Start(IShowRestartReminder());
-        }
-
-        private static IEnumerator IShowRestartReminder()
-        {
-            Decoder.SaveModsToCache();
-            yield return new WaitForSecondsRealtime(.5f);
-            TextPopup("Please restart your game!");
-        }
+        }     
     }
 }
 
