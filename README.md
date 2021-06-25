@@ -8,4 +8,4 @@
 
 
 ## To Modders
-If you want to add your mod to ModBrowser, do a PR to modData.json and add your mod there. Please make sure you don't have any typos!
+If you want to add your mod to ModBrowser, do a PR to **ModData.json** and add your mod there. Please make sure you don't have any typos!
