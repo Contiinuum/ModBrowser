@@ -188,6 +188,13 @@
       "userName": "Contiinuum",
       "displayUserName": "Continuum",
       "description": "Adds automated Lightshows to all maps."
+    },
+    {
+      "repoName": "AudicaMineSoundDisabler",
+      "displayRepoName": "Mine Sound Disabler",
+      "userName": "MeepsKitten",
+      "displayUserName": "MeepsKitten",
+      "description": "Disables the sound mines make as they fly past"
     }
 
   ]
