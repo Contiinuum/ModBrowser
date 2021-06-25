@@ -334,6 +334,7 @@ namespace ModBrowser
                 MelonLogger.Msg(mod.displayRepoName + " downloaded.");
                 mod.isDownloaded = true;
                 mod.isUpdated = true;
+                if (mod.repoName == "ModBrowser") return;
                 if(!reenable) melon.OnApplicationStart();
                 melon.HarmonyInstance.PatchAll(melon.Assembly);
             }
