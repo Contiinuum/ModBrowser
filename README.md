@@ -9,3 +9,6 @@
 
 ## To Modders
 If you want to add your mod to ModBrowser, do a PR to **ModData.json** and add your mod there. Please make sure you don't have any typos!
+
+### Important
+Please version your github releases the same as your mods, e.g. 1.0.5
