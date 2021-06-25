@@ -65,6 +65,7 @@ namespace ModBrowser
             }
 			foreach(Mod mod in Main.mods)
             {
+				if (mod.repoName == "ModBrowser") continue;
 				var modheader = optionsMenu.AddHeader(0, $"{mod.displayRepoName} <size=5>(by {mod.displayUserName})</size>");
 				optionsMenu.scrollable.AddRow(modheader);
 				var buttonList = new Il2CppSystem.Collections.Generic.List<GameObject>();
