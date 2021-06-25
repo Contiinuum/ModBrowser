@@ -195,6 +195,13 @@
       "userName": "MeepsKitten",
       "displayUserName": "MeepsKitten",
       "description": "Disables the sound mines make as they fly past"
+    },
+    {
+      "repoName": "ModBrowser",
+      "displayRepoName": "Mod Browser",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description": "Lets you download, update and delelte Mods in-game"
     }
 
   ]
