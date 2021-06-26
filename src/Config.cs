@@ -7,12 +7,11 @@ namespace ModBrowser
     {
         public const string Category = "ModBrowser";
 
-        public static string lastUpdateCheck;
         public static string modDataETag;
 
         public static void RegisterConfig()
         {
-            MelonPreferences.CreateEntry(Category, nameof(modDataETag), "", modDataETag, true);
+            MelonPreferences.CreateEntry(Category, nameof(modDataETag), "", modDataETag);
             OnModSettingsApplied();
         }
 

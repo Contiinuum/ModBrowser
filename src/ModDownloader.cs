@@ -23,21 +23,11 @@ namespace ModBrowser
         internal static bool showPopup = false;
         internal static int remainingRequests = 0;
         private static string modDataETag;
-        /// <summary>
-        /// Coroutine that searches for songs using the web API
-        /// </summary>
-        /// <param name="search">Query text, e.g. song name, artist or mapper (partial matches possible)</param>
-        /// <param name="onSearchComplete">Called with search result once search is completed, use to process search result</param>
-        /// <param name="difficulty">Only find songs with given difficulty</param>
-        /// <param name="curated">Only find songs that are curated</param>
-        /// <param name="sortByPlayCount">Sort result by play count</param>
-        /// <param name="page">Page to return (see APISongList.total_pages after initial search (page = 1) to check if multiple pages exist)</param>
-        /// <param name="total">Bypasses all query and filter limitations and just returns entire song list</param>
 
         internal static void ShowQueuedPopup()
         {
             showPopup = false;
-            Main.TextPopup("Mods updated!");
+            Main.TextPopup("Mods updated - please restart.");
         }
 
         internal static void GetRateLimit()
@@ -107,13 +97,9 @@ namespace ModBrowser
                     {
                         UseRequest("Get Info for " + mod.displayRepoName);
                         mod.eTag = response.Headers["ETag"];
-                        //MelonLogger.Warning("StatusCode: " + response.StatusCode);
-                        //MelonLogger.Warning("Last modified: " + response.Headers["Last-Modified"]);
-                        //MelonLogger.Warning("RateLimit-Remaining: " + response.Headers["X-RateLimit-Remaining"]);
                         string json = reader.ReadToEnd();
                         var data = SimpleJSON.JSON.Parse(json);
                         mod.version = data["tag_name"];
-                        //mod.version = new Version(version.Major, version.Minor, version.Build, 0);
                         mod.downloadLink = data["assets"][0]["browser_download_url"];
                         mod.fileName = data["assets"][0]["name"];
                     }
@@ -249,15 +235,6 @@ namespace ModBrowser
             MelonCoroutines.Start(GetAllModInfos());
         }
 
-        /// <summary>
-        /// Coroutine that downloads a song from given download URL. Caller is responsible to call
-        /// SongBrowser.ReloadSongList() once download is done
-        /// </summary>
-        /// <param name="songID">SongID of download target, typically Song.song_id</param>
-        /// <param name="downloadUrl">Download target, typically Song.download_url</param>
-        /// <param name="onDownloadComplete">Called when download has been written to disk.
-        ///     First argument is the songID of the downloaded song.
-        ///     Second argument is true if the download succeeded, false otherwise.</param>
         public static IEnumerator DownloadMod(Mod mod, bool update, bool onLoad = false)
         {
             if(Main.pendingDelete.FirstOrDefault(m => m.displayRepoName == mod.displayRepoName) is Mod pending)
@@ -278,7 +255,7 @@ namespace ModBrowser
             }
             using (WebClient client = new WebClient())
             {
-                string targetPath = Path.Combine(Environment.CurrentDirectory, "Mods");
+                string targetPath = Path.Combine(Environment.CurrentDirectory, "Downloads"); //"Mods"
                 if (!Directory.Exists(targetPath))
                 {
                     Directory.CreateDirectory(targetPath);
@@ -288,13 +265,13 @@ namespace ModBrowser
                 try
                 {
                     client.Headers.Add("user-agent", "ModBrowser");
-                    //bytes = await client.DownloadDataTaskAsync(new Uri(mod.downloadLink));
                     
                     bytes = client.DownloadData(new Uri(mod.downloadLink));
                     UseRequest("Downloading " + mod.displayRepoName + "..");
+                    MelonMod melon = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name + ".dll" == mod.fileName);
+                    if (melon != null) melon.HarmonyInstance.UnpatchSelf();
                     using (FileStream stream = new FileStream(targetPath, FileMode.Create))
                     {
-                        //await stream.WriteAsync(bytes, 0, bytes.Length);
                         stream.Write(bytes, 0, bytes.Length);
                         mod.isDownloaded = true;
                         mod.isUpdated = true;
@@ -317,9 +294,12 @@ namespace ModBrowser
                 }
                 yield return null;
             }
-            yield return new WaitForSecondsRealtime(2f);
-            LoadMod(mod, false);
-            
+            //yield return new WaitForSecondsRealtime(2f);
+            if (onLoad) Main.pendingUpdate.Add(mod);
+            else LoadMod(mod, false);
+
+
+
             GetModInfo(mod);
         }
 
@@ -335,8 +315,36 @@ namespace ModBrowser
                 mod.isDownloaded = true;
                 mod.isUpdated = true;
                 if (mod.repoName == "ModBrowser") return;
-                if(!reenable) melon.OnApplicationStart();
+                if(!reenable)
+                {                  
+                    melon.OnApplicationStart();
+                }
                 melon.HarmonyInstance.PatchAll(melon.Assembly);
+            }
+        }
+
+        public static void HandlePendingUpdates()
+        {
+            string sourcePath = Path.Combine(Environment.CurrentDirectory, "Downloads");
+            string destPath = Path.Combine(Environment.CurrentDirectory, "Mods");
+            if (Directory.Exists(sourcePath))
+            {
+                foreach (Mod mod in Main.pendingUpdate)
+                {
+                    string sourceFile = Path.Combine(sourcePath, mod.fileName);
+                    string destFile = Path.Combine(destPath, mod.fileName);
+                    if (File.Exists(sourceFile))
+                    {
+                        if (File.Exists(destFile)) File.Delete(destFile);
+                        File.Move(sourceFile, destFile);
+                        Mod mainMod = Main.mods.FirstOrDefault(m => m.repoName == mod.repoName);
+                        if(mainMod != null)
+                        {
+                            mainMod.isDownloaded = true;
+                            mainMod.isUpdated = true;
+                        }
+                    }
+                }
             }
         }
 

@@ -11,6 +11,7 @@ namespace ModBrowser
         public static List<Mod> mods = new List<Mod>();
         public static bool showRestartReminder = false;
         public static List<Mod> pendingDelete = new List<Mod>();
+        public static List<Mod> pendingUpdate = new List<Mod>();
         public static class BuildInfo
         {
             public const string Name = "ModBrowser";  // Name of the Mod.  (MUST BE SET)
@@ -19,42 +20,22 @@ namespace ModBrowser
             public const string Version = "1.0.0"; // Version of the Mod.  (MUST BE SET)
             public const string DownloadLink = null; // Download Link for the Mod.  (Set as null if none)
         }
-        
-		 public override void OnApplicationStart()
-         {
+
+
+        public override void OnApplicationStart()
+        {
             Config.RegisterConfig();
-            Integrations.LoadIntegrations();
-            //TimeSpan limit = TimeSpan.FromMinutes(60);
-            //DateTime lastUpdate = DateTime.Parse(Config.lastUpdateCheck);
-            //bool shouldUpdate = true;
-            //MelonLogger.Warning(DateTime.UtcNow - lastUpdate);
-            Config.UpdateValue(nameof(Config.lastUpdateCheck), DateTime.UtcNow.ToString());
-            MelonLogger.Msg("Checking for updates..");
-            /*if (DateTime.UtcNow - lastUpdate > limit)
-            {
-            }
-            else
-            {
-                shouldUpdate = false;
-                MelonLogger.Msg("Checked for updates less than an hour ago. Skipping.");
-            }*/
             ModDownloader.GetRateLimit();
             bool shouldUpdate = ModDownloader.CheckUpdate();
             MelonCoroutines.Start(ModDownloader.UpdateModData(shouldUpdate));
-        }
+        }       
+        
 
         public override void OnApplicationQuit()
         {
+            ModDownloader.HandlePendingUpdates();
             ModDownloader.DeleteMods();
             Decoder.SaveModsToCache();
-        }
-
-        public override void OnUpdate()
-        {
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-
-            }
         }
 
         public static void TextPopup(string text)

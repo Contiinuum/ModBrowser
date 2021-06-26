@@ -186,7 +186,6 @@
     <Compile Include="src\Config.cs" />
     <Compile Include="src\Decoder.cs" />
     <Compile Include="src\Hooks.cs" />
-    <Compile Include="src\Integrations.cs" />
     <Compile Include="src\JSON\SimpleJSON.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
