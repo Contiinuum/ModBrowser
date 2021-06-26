@@ -115,9 +115,9 @@
     {
       "repoName": "SongBrowser",
       "displayRepoName": "Song Browser",
-      "userName": "octoberU",
-      "displayUserName": "octo",
-      "description": "Download songs from in-game!"
+      "userName": "Silzoid",
+      "displayUserName": "octo and AUDICA modding group",
+      "description": "Download and manage songs from in-game, and much more."
     },
     {
       "repoName": "SongSettings",
@@ -202,7 +202,13 @@
       "userName": "Contiinuum",
       "displayUserName": "Continuum",
       "description": "Lets you download, update and delelte Mods in-game"
+    },
+    {
+      "repoName": "SongRequest",
+      "displayRepoName": "Song Request",
+      "userName": "Silzoid",
+      "displayUserName": "Alternity and Silzoid",
+      "description": "Twitch integration allowing viewers to request songs."
     }
-
   ]
 }
