@@ -2,7 +2,7 @@
 
 ## Features
 - **Download**, **Update** and **Delete** Mods from in-game
-- Automatically keeps all of your mods up to date
+- Automatically keeps all of your mods up to date (updates apply after a restart)
 - Newly downloaded mods are **hotloaded** - no need for restarts!
 
 
