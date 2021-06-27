@@ -255,7 +255,7 @@ namespace ModBrowser
             }
             using (WebClient client = new WebClient())
             {
-                string targetPath = Path.Combine(Environment.CurrentDirectory, "Downloads"); //"Mods"
+                string targetPath = onLoad ? Path.Combine(Environment.CurrentDirectory, "Downloads") : Path.Combine(Environment.CurrentDirectory, "Mods"); //"Mods"
                 if (!Directory.Exists(targetPath))
                 {
                     Directory.CreateDirectory(targetPath);
