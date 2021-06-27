@@ -36,6 +36,19 @@ namespace ModBrowser
                             {
                                 mods.Add(mod);
                             }
+                            else
+                            {
+                                Mod m = Main.mods.FirstOrDefault(m1 => m1.repoName == mod.repoName);
+                                if(m != null)
+                                {
+                                    if(m.userName != mod.userName)
+                                    {
+                                        MelonLogger.Msg("Updated username in cache from " + m.userName + " to " + mod.userName);
+                                        m.userName = mod.userName;
+                                        m.downloadLink = mod.downloadLink;
+                                    }
+                                }
+                            }
                         }
 
                         //Main.mods = mods;
