@@ -209,6 +209,13 @@
       "userName": "Silzoid",
       "displayUserName": "Alternity and Silzoid",
       "description": "Twitch integration allowing viewers to request songs."
+    },
+    {
+      "repoName": "CustomCampaign",
+      "displayRepoName": "Custom Campaign",
+      "userName": "Contiinuum",
+      "displayUserName": "Continuum",
+      "description": "Custom Campaigns for Audica!"
     }
   ]
 }
